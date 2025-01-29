@@ -1,0 +1,28 @@
+[package]
+name = "kagippjs"
+version = "0.1.0"
+edition = "2021"
+authors = ["Fernando Virdia <fernando@fundamental.domains>"]
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+kagippcore = { path = "../core" }
+wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
+wasm-bindgen-futures = "0.4.40"
+getrandom = { version = "0.2", features = ["js"] }
+serde = "1"
+serde_json = "1.0"
+panic_handler = { path = "../panic_handler" }
+
+[dependencies.web-sys]
+version = "0.3.4"
+features = [
+  'console',
+  'Document',
+  'Element',
+  'HtmlElement',
+  'Node',
+  'Window',
+]

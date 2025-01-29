@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <title>hello-wasm example</title>
+  </head>
+  <body>
+    <script type="module">
+      import init, * as kagippjs from "./pkg/kagippjs.js";
+      console.log(kagippjs)
+
+      await init();
+
+      let header_s = JSON.stringify(
+        {header: "PrivateToken challenge=-RoAHHByaXZhY3ktcGFzcy1pc3N1ZXIua2FnaS5jb20AABxwcml2YWN5LXBhc3Mtb3JpZ2luLmthZ2kuY29t, token-key=TI0PmpwG6fEuUyVrgl1nPo2kEGbj9mOjBFLf22DR02g=", error: ""}
+      )
+      ;
+      let nr = 2;
+
+      console.log("retval token_request -------------")
+      try {
+        let rv = await kagippjs.token_request(header_s, nr);
+        console.log(rv);
+      } catch (exc) {
+        // bad state due to panic=abort in rust/wasm_bindgen
+        console.log("exception, likely due to rust panic")
+        console.log(exc);
+      }
+      console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+
+      let client_state_s =
+      JSON.stringify(
+        {state: "{\n  \"nonces_s\": [\n    \"656a11f613e163b908f72eba0dbcb4b8ecd3432a24f9ec3c5434af5c14caa627\",\n    \"e4640cae352028dfac788620abcd18820a8ca2be585e1f452c05555c55d96c01\"\n  ],\n  \"blinds_s\": [\n    \"ab44c0373eaa65a807e1b3e7bcc0cdf348a5940663d276bff008f24f3ad3b006\",\n    \"e0b3a388801c6d7bf8160b12f3bdbf504c4d55920df4edd30b11314d34c50007\"\n  ]\n}", error: ""}
+      )
+      ;
+      let token_response_s = JSON.stringify(
+        {token_response: "AEDeZeyzNutCTWZyyL9i_4_ZSPLctqqCVZk8kPtynwROTtLCt6SXqL1f8i7Z37RQLrEve8ayvPS5qMs-ZcmD7dpWCwsKdTbmama0mVf3MCW_yKRChajryeXKfmKkg6QNIgcNatIu69B6uhsEYYel9AvaTgBvSpbRpbSDTZFIFxHDCA==", error: ""}
+      );
+      
+      console.log("retval token_finalization -------------")
+      try {
+        let rv2 = await kagippjs.token_finalization(header_s, client_state_s, token_response_s);
+        console.log(rv2);
+      } catch (ex) {
+        // bad state due to panic=abort in rust/wasm_bindgen
+        console.log("exception, likely due to rust panic")
+        console.log(ex);
+      }
+      console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+    </script>
+  </body>
+</html>
