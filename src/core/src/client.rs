@@ -1,9 +1,5 @@
 #![allow(unreachable_patterns)] // used to catch possible error types not yet defined by dependencies
 
-// BACKLOG: refactoring HexBlind away would be neat
-// BACKLOG: gen_token_request: would be neat to directly serialise blinds and nonces instead of using MyTokenReqState
-// BACKLOG: gen_token: can we pass token_states without having to reconstruct challenge, nonces and blinds?
-
 use crate::config::{batched_tokens_mod, VoprfGroup};
 use crate::crystal::{
     crystal_error, decode_bytes_from_crystal, decode_string_from_crystal,
@@ -190,9 +186,6 @@ pub unsafe extern "C" fn gen_token_request(
     result
 }
 
-/// # Safety
-///
-/// This function should not be called before the horsemen are ready.
 #[no_mangle]
 pub unsafe extern "C" fn gen_token(
     www_authenticate_header_cstr: *const i8,

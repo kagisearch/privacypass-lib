@@ -1,10 +1,5 @@
-// NOTE: rust panic handling here is a bit of a lie, since currently wasm_bindgen forces panic=abort
-
-// BACKLOG: get rid of the unsafe: requires removing c_str layer in API (inherited from crystal-lang-facing code)
-
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
-// use web_sys::console;
 
 const NOERROR: &str = "";
 type ErrorMessage = String;
@@ -39,16 +34,6 @@ pub fn error_json_retval(message: &str) -> String {
     // this should be unable to fail
     serde_json::to_string(&error_obj).expect("failed to encode JSONRetVal into string")
 }
-
-/*
-
-The code below is analogous to the KagiPP module in Crystal.
-That is, this code in wrapping the kagippcore library, decapsulating results, etc.
-Notably this means artificially transforming back and forth from *const i8, which is
-nonesense. This is just so that we can have an initial working implementation
-and move into a POC crystal web server + javascript client, as the interface should now be stable.
-
-*/
 
 #[wasm_bindgen]
 pub fn token_request(header_s: String, nr: u16) -> String {

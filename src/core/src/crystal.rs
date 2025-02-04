@@ -7,8 +7,6 @@ use base64::{engine::general_purpose::URL_SAFE, Engine as _};
 use std::ffi::{CStr, CString};
 use std::os::raw::c_char;
 
-// BACKLOG: how should hypothetical errors in error_json_retval be handled?
-
 pub fn encode_string_for_crystal(data: String) -> Result<*const c_char> {
     let c_string = CString::new(data).with_context(|| "encode_string_for_crystal".to_string())?;
     Ok(c_string.into_raw()) // Move ownership to C
@@ -67,20 +65,6 @@ pub fn error_json_retval(message: &str) -> *const c_char {
         serde_json::to_string(&error_obj).expect("failed to encode JSONRetVal into string"); // this should be unable to fail
     encode_string_for_crystal(error_s).expect("failed to pass encoded JSONRetVal to Crystal")
 }
-
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
-// FREEING MEM https://dev.to/kgrech/7-ways-to-pass-a-string-between-rust-and-c-4ieb
-//             https://jakegoulding.com/rust-ffi-omnibus/string_return/
-/*
-#[no_mangle]
-pub extern "C" fn create_string() -> *const c_char {
-    let c_string = CString::new("asd").expect("CString::new failed");
-    c_string.into_raw() // Move ownership to C
-}
-*/
 
 /// # Safety
 /// The ptr should be a valid pointer to the string allocated by rust
