@@ -3,6 +3,7 @@ resolver = "2"
 members = [
   "core",
   "wasm",
+  "ffi",
 ]
 
 [profile.dev]
@@ -10,3 +11,9 @@ opt-level = 1
 
 [profile.release]
 opt-level = 3
+lto = true
+
+[profile.release.package.kagipp_ffi]
+opt-level = "z"          # Optimize for size instead of speed
+codegen-units = 1
+strip = true

@@ -14,7 +14,6 @@ use batched_tokens_mod::{
 };
 use rand::{rngs::OsRng, RngCore};
 use serde::{Deserialize, Serialize};
-use std::ffi::c_char;
 use tls_codec::{Deserialize as TlsDeserializeTrait, Serialize as TlsSerializeTrait, TlsVecU16};
 use tls_codec_derive::{TlsDeserialize, TlsSerialize, TlsSize};
 
@@ -88,7 +87,7 @@ pub fn token_response_nr(bytes: &[u8]) -> Result<usize, CrystalErrorType> {
 pub unsafe extern "C" fn gen_token_request(
     www_authenticate_header_cstr: *const i8,
     nr: u16,
-) -> *const c_char {
+) -> *const i8 {
     // NOTE: the value of result below would not be *const i8
     //       if the begin_panic_handling and end_panic_handling macros where not there
     begin_panic_handling!();
@@ -191,7 +190,7 @@ pub unsafe extern "C" fn gen_token(
     www_authenticate_header_cstr: *const i8,
     client_state_cstr: *const i8,
     token_response_cstr: *const i8,
-) -> *const c_char {
+) -> *const i8 {
     // NOTE: the value of result below would not be *const i8
     //       if the begin_panic_handling and end_panic_handling macros where not there
     begin_panic_handling!();

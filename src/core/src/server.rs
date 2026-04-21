@@ -24,7 +24,6 @@ use privacypass::batched_tokens_ristretto255::server::{
 use privacypass::{auth::authenticate::TokenChallenge, TokenType, TruncatedTokenKeyId};
 use rand::{rngs::OsRng, RngCore};
 use serde::{Deserialize, Serialize};
-use std::ffi::c_char;
 use thiserror::Error;
 use tls_codec::{Deserialize as TlsDeserializeTrait, Serialize as TlsSerializeTrait, TlsVecU16};
 use tls_codec_derive::{TlsDeserialize, TlsSerialize, TlsSize};
@@ -98,7 +97,7 @@ use voprf::{derive_key, Group, Mode};
 use privacypass::auth::authenticate::RedemptionContext;
 
 #[no_mangle]
-pub extern "C" fn gen_keys() -> *const c_char {
+pub extern "C" fn gen_keys() -> *const i8 {
     // NOTE: the value of result below would not be *const i8
     //       if the begin_panic_handling and end_panic_handling macros where not there
     begin_panic_handling!();
@@ -160,7 +159,7 @@ pub extern "C" fn gen_keys() -> *const c_char {
 pub extern "C" fn gen_token_challenge(
     issuer_name_cstr: *const i8,
     origin_info_cstr: *const i8,
-) -> *const c_char {
+) -> *const i8 {
     // NOTE: the value of result below would not be *const i8
     //       if the begin_panic_handling and end_panic_handling macros where not there
     begin_panic_handling!();
@@ -201,7 +200,7 @@ pub extern "C" fn gen_www_authenticate_header(
     token_challenge_c: *const i8,
     token_key_c: *const i8,
     max_age_u32: u32,
-) -> *const c_char {
+) -> *const i8 {
     // NOTE: the value of result below would not be *const i8
     //       if the begin_panic_handling and end_panic_handling macros where not there
     begin_panic_handling!();
@@ -242,7 +241,7 @@ pub extern "C" fn gen_token_response(
     sk_cstr: *const i8,
     token_request_cstr: *const i8,
     max_nr: u16, // max number of BlindedElements that a client can send and get a response for
-) -> *const c_char {
+) -> *const i8 {
     // NOTE: the value of result below would not be *const i8
     //       if the begin_panic_handling and end_panic_handling macros where not there
     begin_panic_handling!();
@@ -306,7 +305,7 @@ pub extern "C" fn validate_token(
     sk_cstr: *const i8,
     token_cstr: *const i8,
     token_challenge_cstr: *const i8,
-) -> *const c_char {
+) -> *const i8 {
     // NOTE: the value of result below would not be *const i8
     //       if the begin_panic_handling and end_panic_handling macros where not there
     begin_panic_handling!();
