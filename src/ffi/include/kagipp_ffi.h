@@ -60,4 +60,15 @@ int8_t *privacy_pass_token_finalization(const int8_t *www_authenticate_header,
  */
 void privacy_pass_free_string(int8_t *ptr);
 
+/**
+ * Get the library version as a C string.
+ *
+ * # Returns
+ * Pointer to a null-terminated C string containing the package version (e.g., "0.1.0").
+ *
+ * # Safety
+ * Caller must free the returned pointer with `privacy_pass_free_string`.
+ */
+int8_t *privacy_pass_version(void);
+
 #endif  /* KAGIPP_FFI_H */
