@@ -10,7 +10,7 @@ echo ""
 
 # Determine script location
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-PLUGIN_DIR="$SCRIPT_DIR/../../../privacypass_ffi"
+PLUGIN_DIR="$SCRIPT_DIR/../../../"
 
 if [ ! -d "$PLUGIN_DIR" ]; then
     echo "⚠️  Warning: Flutter plugin directory not found at $PLUGIN_DIR"
