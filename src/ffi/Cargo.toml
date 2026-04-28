@@ -1,0 +1,18 @@
+[package]
+name = "kagipp_ffi"
+version = "0.1.0"
+edition = "2021"
+authors = ["Fernando Virdia <fernando@fundamental.domains>"]
+
+[lib]
+name = "kagipp_ffi"
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies]
+kagippcore = { path = "../core" }
+panic_handler = { path = "../panic_handler" }
+serde = "1"
+serde_json = "1.0"
+
+[build-dependencies]
+cbindgen = "0.27"

@@ -7,12 +7,12 @@ use base64::{engine::general_purpose::URL_SAFE, Engine as _};
 use std::ffi::{CStr, CString};
 use std::os::raw::c_char;
 
-pub fn encode_string_for_crystal(data: String) -> Result<*const c_char> {
+pub fn encode_string_for_crystal(data: String) -> Result<*const i8> {
     let c_string = CString::new(data).with_context(|| "encode_string_for_crystal".to_string())?;
-    Ok(c_string.into_raw()) // Move ownership to C
+    Ok(c_string.into_raw() as *const i8) // Move ownership to C, cast to i8 for cross-platform compatibility
 }
 
-pub fn encode_bytes_for_crystal(data: Vec<u8>) -> Result<*const c_char> {
+pub fn encode_bytes_for_crystal(data: Vec<u8>) -> Result<*const i8> {
     let encoded_data: String = URL_SAFE.encode(&data);
     let encoded_s = encode_string_for_crystal(encoded_data)
         .with_context(|| "encode_bytes_for_crystal".to_string())?;
@@ -23,7 +23,7 @@ pub fn encode_bytes_for_crystal(data: Vec<u8>) -> Result<*const c_char> {
 ///
 /// Callers must provide a valid NUL terminated string pointer.
 pub unsafe fn decode_string_from_crystal(cstr: *const i8) -> Result<String> {
-    let c_str: &CStr = unsafe { CStr::from_ptr(cstr) };
+    let c_str: &CStr = unsafe { CStr::from_ptr(cstr as *const c_char) };
     let rust_s = c_str
         .to_str()
         .with_context(|| "decode_string_from_crystal".to_string())?
@@ -56,7 +56,7 @@ pub struct JSONRetVal {
     pub error: String,
 }
 
-pub fn error_json_retval(message: &str) -> *const c_char {
+pub fn error_json_retval(message: &str) -> *const i8 {
     let error_obj = JSONRetVal {
         retval: "".to_string(),
         error: message.to_string(),
@@ -69,10 +69,10 @@ pub fn error_json_retval(message: &str) -> *const c_char {
 /// # Safety
 /// The ptr should be a valid pointer to the string allocated by rust
 #[no_mangle]
-pub extern "C" fn free_string(ptr: *const c_char) {
+pub extern "C" fn free_string(ptr: *const i8) {
     if ptr.is_null() {
         return;
     }
     // Take the ownership back to rust and drop the owner
-    let _ = unsafe { CString::from_raw(ptr as *mut _) };
+    let _ = unsafe { CString::from_raw(ptr as *mut c_char) };
 }
