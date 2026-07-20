@@ -1,25 +1,34 @@
 #!/bin/bash
-# Build Privacy Pass FFI for macOS (dylib via cdylib)
+# Build Privacy Pass FFI for macOS (universal dylib via cdylib: arm64 + x86_64)
 
 set -e
 
-echo "🍎 Building Privacy Pass FFI for macOS..."
+echo "🍎 Building Privacy Pass FFI for macOS (universal)..."
 
 # Determine script location
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
 
-# Build for macOS (native architecture)
-echo "🔨 Building for macOS (native - $(uname -m))..."
-cargo build --release
+echo "🔨 Building for macOS (arm64 - Apple Silicon)..."
+cargo build --release --target aarch64-apple-darwin
 
-# The cdylib will be at:
-# ../target/release/libkagipp_ffi.dylib (yes, .dylib even though we specified cdylib!)
+echo "🔨 Building for macOS (x86_64 - Intel)..."
+cargo build --release --target x86_64-apple-darwin
 
-DYLIB_PATH="../target/release/libkagipp_ffi.dylib"
+echo "🔗 Creating universal macOS dylib..."
+mkdir -p ../target/universal-macos
+
+# Combine both architectures into a single fat binary so the library runs
+# natively on Apple Silicon and Intel Macs.
+lipo -create \
+    ../target/aarch64-apple-darwin/release/libkagipp_ffi.dylib \
+    ../target/x86_64-apple-darwin/release/libkagipp_ffi.dylib \
+    -output ../target/universal-macos/libkagipp_ffi.dylib
+
+DYLIB_PATH="../target/universal-macos/libkagipp_ffi.dylib"
 
 if [ -f "$DYLIB_PATH" ]; then
-    echo "✅ macOS dylib built successfully!"
+    echo "✅ macOS universal dylib built successfully!"
     echo ""
     echo "📦 Library location:"
     echo "   $DYLIB_PATH"
@@ -36,7 +45,7 @@ if [ -f "$DYLIB_PATH" ]; then
     lipo -info "$DYLIB_PATH"
 
 else
-    echo "❌ Failed to build dylib"
+    echo "❌ Failed to build universal dylib"
     exit 1
 fi
 
